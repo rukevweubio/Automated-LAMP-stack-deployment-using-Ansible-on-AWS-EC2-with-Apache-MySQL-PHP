@@ -1,1 +1,69 @@
 
+---
+- name: Create MySQL database and user for login system
+  hosts: ec2
+  become: yes
+
+  vars:
+    mysql_root_user: root
+    mysql_root_password: root
+    mysql_db_name: testdb
+    mysql_user: mysql
+    mysql_password: root
+    hosts: 3.239.158.127
+
+  tasks:
+    - name: Create .my.cnf file for MySQL client
+      ansible.builtin.copy:
+        dest: ~/.my.cnf
+        content: |
+          [client]
+          user = {{ mysql_root_user }}
+          password = {{ mysql_root_password }}
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Ensure Python 3 pip is installed
+      become: yes
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Install PyMySQL using pip
+      become: yes
+      package:
+        name: python3-mysqldb
+
+
+    - name: Create MySQL database
+      community.mysql.mysql_db:
+        name: "{{ mysql_db_name }}"
+        state: present
+      args:
+        login_user: "{{ mysql_root_user }}"
+        login_password: "{{ mysql_root_password }}"
+
+    - name: Create MySQL user
+      community.mysql.mysql_user:
+        name: "{{ mysql_user }}"
+        host: "{{hosts}}"
+        password: "{{ mysql_password }}"
+        priv: "*.*:ALL"
+        state: present
+        check_implicit_admin: yes
+      args:
+        login_user: "{{ mysql_root_user }}"
+        login_password: "{{ mysql_root_password }}"
+
+    - name: Grant privileges and flush privileges
+      community.mysql.mysql_user:
+        name: "{{ mysql_user }}"
+        host: localhost
+        priv: "*.*:ALL"
+        state: present
+        check_implicit_admin: yes
+        append_privs: yes
+      args:
+        login_user: "{{ mysql_root_user }}"
+        login_password: "{{ mysql_root_password }}
