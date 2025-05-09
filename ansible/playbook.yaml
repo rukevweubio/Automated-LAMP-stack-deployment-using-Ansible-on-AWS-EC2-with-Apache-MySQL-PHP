@@ -1,1 +1,64 @@
 
+---
+- name: Automated LAMP stack deployment using Ansible on AWS EC2 with Apache, MySQL, PHP
+  hosts: ec2
+  become: yes  # Run tasks with sudo privileges
+
+  tasks:
+    - name: Update apt cache (Debian/Ubuntu)
+      ansible.builtin.apt:
+        update_cache: yes
+
+
+    - name: Install Apache2 webserver
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+     # when: ansible_facts.packager == "apt"
+
+    - name: Start and enable Apache2 webserver
+      ansible.builtin.service:
+        name: apache2
+        state: started
+        enabled: yes
+      #when: ansible_facts.packager == "apt"
+
+    - name: Install MySQL server
+      ansible.builtin.apt:
+        name: mysql-server
+        state: present
+      #when: ansible_facts.packager == "apt"
+
+    - name: Ensure MySQL service is running and enabled
+      ansible.builtin.service:
+        name: mysql
+        state: started
+        enabled: yes
+      #when: ansible_facts.packager == "apt"
+
+    - name: Display message after MySQL installation
+      ansible.builtin.debug:
+        msg: "MySQL has been installed and started."
+
+    - name: Install PHP and required modules
+      ansible.builtin.apt:
+        name:
+          - php
+          - libapache2-mod-php
+          - php-mysql
+        state: present
+      #when: ansible_facts.packager == "apt"
+
+    - name: Create a test PHP info page
+      ansible.builtin.copy:
+        content: "<?php phpinfo(); ?>"
+        dest: /var/www/html/info.php
+        mode: '0644'
+      notify: Restart Apache2
+
+  handlers:
+    - name: Restart Apache2
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
+
