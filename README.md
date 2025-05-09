@@ -27,6 +27,11 @@ The solution uses Ansible to orchestrate the deployment process on an AWS EC2 in
 * Install PHP and necessary modules for Apache integration.
 * Deploy a sample PHP application to verify the stack.
 
+  ![ansible playbook](https://github.com/rukevweubio/Automated-LAMP-stack-deployment-using-Ansible-on-AWS-EC2-with-Apache-MySQL-PHP/blob/main/ansible/template/picture/Screenshot%20(678).png)
+
+
+   ![ansible playbook](https://github.com/rukevweubio/Automated-LAMP-stack-deployment-using-Ansible-on-AWS-EC2-with-Apache-MySQL-PHP/blob/main/ansible/template/picture/Screenshot%20(679).png)
+
 
 # Security Considerations:
 Implement basic security measures, such as setting a MySQL root password and configuring Apache to run as a non-root user.
