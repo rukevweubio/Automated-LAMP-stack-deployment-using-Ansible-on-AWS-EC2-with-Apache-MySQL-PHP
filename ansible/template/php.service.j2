@@ -1,1 +1,82 @@
+---
+- name: Copy content to the PHP file
+  hosts: ec2
+  become: yes
+
+  tasks:
+    - name: Copy content to the PHP file in /var/www/html/
+      ansible.builtin.copy:
+        dest: /var/www/html/form.php
+        content: |
+          <?php
+            // Database connection settings
+            $host = "localhost";
+            $user = "root"; // Use a non-root user in production!
+            $password = ""; // Set password if configured
+            $dbname = "testdb";
+
+            // Create connection
+            $conn = new mysqli($host, $user, $password, $dbname);
+
+            // Check connection
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+            }
+
+            // Handle form submission
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                // Escape inputs
+                $name = $conn->real_escape_string($_POST['name']);
+                $email = $conn->real_escape_string($_POST['email']);
+
+                // Insert into users table
+                $sql = "INSERT INTO users (name, email) VALUES ('$name', '$email')";
+                if ($conn->query($sql) === TRUE) {
+                    echo "<p>New record created successfully.</p>";
+                } else {
+                    echo "Error: " . $sql . "<br>" . $conn->error;
+                }
+            }
+          ?>
+
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>PHP & MySQL Test</title>
+          </head>
+          <body>
+              <h2>Submit Your Info</h2>
+              <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                  Name: <input type="text" name="name"><br><br>
+                  Email: <input type="email" name="email"><br><br>
+                  <input type="submit" value="Submit">
+              </form>
+
+              <h3>User Submissions:</h3>
+              <?php
+                // Fetch all users from database
+                $result = $conn->query("SELECT * FROM users");
+                if ($result && $result->num_rows > 0) {
+                    echo "<ul>";
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<li>" . htmlspecialchars($row['name']) . " - " . htmlspecialchars($row['email']) . "</li>";
+                    }
+                    echo "</ul>";
+                } else {
+                    echo "<p>No submissions yet.</p>";
+                }
+
+                // Close connection
+                $conn->close();
+              ?>
+          </body>
+          </html>
+        mode: '0644'
+      notify: Restart Apache2
+
+  handlers:
+    - name: Restart Apache2
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
 
