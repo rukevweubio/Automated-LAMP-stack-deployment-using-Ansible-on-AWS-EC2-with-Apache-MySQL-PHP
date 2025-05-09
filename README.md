@@ -108,5 +108,15 @@ You should see a sample PHP page displaying PHP info and MySQL connection status
 * Advanced Security: Add SSL/TLS support with Let’s Encrypt and configure a firewall (e.g., UFW).
 * Monitoring: Integrate monitoring tools like Prometheus or CloudWatch to track server health.
 * Containerization: Adapt the project to deploy the LAMP stack in Docker containers for portability.
+* 
 
+![ mysql and apache server up and running](https://github.com/rukevweubio/Automated-LAMP-stack-deployment-using-Ansible-on-AWS-EC2-with-Apache-MySQL-PHP/blob/main/ansible/template/picture/Screenshot%20(687).png)
+
+# deploymnet of the php and  webserver 
+![ mysql and apache server up and running](https://github.com/rukevweubio/Automated-LAMP-stack-deployment-using-Ansible-on-AWS-EC2-with-Apache-MySQL-PHP/blob/main/ansible/template/picture/Screenshot%20(685).png)
+
+![ login detail ](https://github.com/rukevweubio/Automated-LAMP-stack-deployment-using-Ansible-on-AWS-EC2-with-Apache-MySQL-PHP/blob/main/ansible/template/picture/Screenshot%20(684).png)
+
+
+![ login detail ](https://github.com/rukevweubio/Automated-LAMP-stack-deployment-using-Ansible-on-AWS-EC2-with-Apache-MySQL-PHP/blob/main/ansible/template/picture/Screenshot%20(683).png)
 
